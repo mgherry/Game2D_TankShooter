@@ -12,7 +12,10 @@ public class Bullet : MonoBehaviour
 
     public MyTank shooterTank;
 
-    public void Awake()
+	public float leaveShieldTimer = 0;
+
+
+	public void Awake()
     {
         currentBounceCount = 0;
     }
@@ -24,7 +27,10 @@ public class Bullet : MonoBehaviour
 
     public void Update()
     {
-    }
+		if (leaveShieldTimer > 0)
+			leaveShieldTimer -= Time.deltaTime;
+
+	}
 
     private void Move(float movementAmount)
     {
@@ -69,10 +75,36 @@ public class Bullet : MonoBehaviour
 		IBulletHittable hitObject = collision.collider.GetComponent<IBulletHittable>();
 		if (hitObject != null)
         {
-            shooterTank.DecreaseCurrentBulletCount();
+			ShieldBehaviour myShield = collision.collider.GetComponent<ShieldBehaviour>();
+			if (myShield != null && myShield.parentTank == shooterTank)
+				return;
+
+			shooterTank.DecreaseCurrentBulletCount();
 			hitObject.HandleBulletHit(TankDefs.BulletType.Normal);
 
 			Destroy(this.gameObject);
         }
     }
+
+	public void SetShieldTimer(float waitSec = 1)
+	{
+		leaveShieldTimer = waitSec;
+	}
+
+	public void OnTriggerEnter2D(Collider2D collider)
+	{
+		IBulletHittable hitObject = collider.GetComponent<IBulletHittable>();
+		if (hitObject != null)
+		{
+			ShieldBehaviour myShield = collider.GetComponent<ShieldBehaviour>();
+
+			if (myShield != null && myShield.parentTank == shooterTank && leaveShieldTimer >= 0)
+				return;
+
+			shooterTank.DecreaseCurrentBulletCount();
+			hitObject.HandleBulletHit(TankDefs.BulletType.Normal);
+
+			Destroy(this.gameObject);
+		}
+	}
 }

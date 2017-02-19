@@ -17,6 +17,7 @@ public class MyTank : MonoBehaviour, IBulletHittable
 	public bool dead = false;
 
 	public ShieldBehaviour ownShield;
+	public float shieldBulletOffset = 1f;
 
 	public TankDefs.BulletType bulletModifier = TankDefs.BulletType.Normal;
 	public int modifierShots = 0;
@@ -245,7 +246,7 @@ public class MyTank : MonoBehaviour, IBulletHittable
 				if (ownShield != null)
 					TurnOnShield();
 
-				this.bulletModifier = TankDefs.BulletType.Shield;
+				this.bulletModifier = TankDefs.BulletType.Normal;
 				bulletPrefab = PickupManager.Instance.GetBulletPrefab(TankDefs.BulletType.Normal);
 
 				modifierShots = 0;
@@ -265,8 +266,11 @@ public class MyTank : MonoBehaviour, IBulletHittable
 		bullet.direction = direction;
 		bullet.shooterTank = this;
 
-		reloadTimer = 0.0f;                                                         //Sets the reloadTimer to 0, so that we can't shoot straight away.
-		currentBulletCount++;
+		if (this.shielded)
+			bullet.SetShieldTimer(0.01f);
+
+		this.reloadTimer = 0.0f;                                                         //Sets the reloadTimer to 0, so that we can't shoot straight away.
+		this.currentBulletCount++;
 	}
 
 	private void ShootShotgun()
