@@ -9,7 +9,7 @@ public class TankDefs {
 		Normal,
 		Shotgun,
 
-
+		Shield,
 
 	}
 

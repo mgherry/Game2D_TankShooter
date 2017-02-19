@@ -66,11 +66,11 @@ public class Bullet : MonoBehaviour
             currentBounceCount++;
         }
 
-		MyTank hitTank = collision.collider.GetComponent<MyTank>();
-		if (hitTank != null)
+		IBulletHittable hitObject = collision.collider.GetComponent<IBulletHittable>();
+		if (hitObject != null)
         {
             shooterTank.DecreaseCurrentBulletCount();
-			hitTank.HandleHit(TankDefs.BulletType.Normal);
+			hitObject.HandleBulletHit(TankDefs.BulletType.Normal);
 
 			Destroy(this.gameObject);
         }

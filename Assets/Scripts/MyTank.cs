@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MyTank : MonoBehaviour
+public class MyTank : MonoBehaviour, IBulletHittable
 {
     public float moveSpeed;                 //How fast the tank can move.
     public float turnSpeed;					//How fast the tank can turn.
@@ -15,6 +15,8 @@ public class MyTank : MonoBehaviour
 
 	public bool shielded = false;
 	public bool dead = false;
+
+	public ShieldBehaviour ownShield;
 
 	public TankDefs.BulletType bulletModifier = TankDefs.BulletType.Normal;
 	public int modifierShots = 0;
@@ -85,9 +87,22 @@ public class MyTank : MonoBehaviour
 		{
 			rig = GetComponent<Rigidbody2D>();
 		}
+
+
+		if (ownShield == null)
+		{
+			ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();			
+		}
+
+		if (ownShield != null)
+		{
+			ownShield.TurnOffShield();
+			shielded = false;
+		}
+
 	}
 
-    public void Move(float movementAmount)
+	public void Move(float movementAmount)
 	{
 		if (dead)
 			return;
@@ -155,7 +170,7 @@ public class MyTank : MonoBehaviour
 		InitializeaTank();
     }
 
-	public void HandleHit(TankDefs.BulletType bulletType)
+	public void HandleBulletHit(TankDefs.BulletType bulletType)
 	{
 		Die();
 	}
@@ -183,23 +198,59 @@ public class MyTank : MonoBehaviour
 		{
 			case TankDefs.BulletType.Normal:
 
+				shielded = false;
+				if (ownShield == null)
+				{
+					ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
+				}
+				if (ownShield != null)
+					TurnOnShield();
+
 				this.bulletModifier = TankDefs.BulletType.Normal;
-				bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
-				
-				maxBulletCount = 4;
-				reloadSpeed = 1;
+				this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
+
+				this.modifierShots = 0;
+				this.maxBulletCount = 4;
+				this.reloadSpeed = 1;
 
 				break;
 
 			case TankDefs.BulletType.Shotgun:
 
-				this.bulletModifier = TankDefs.BulletType.Shotgun;
-				bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
+				shielded = false;
+				if (ownShield == null)
+				{
+					ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
+				}
+				if (ownShield != null)
+					TurnOnShield();
 
-				modifierShots = 4;
-				maxBulletCount = 12;
-				modifierShots = 4;
-				reloadSpeed = 1.2f;        
+				this.bulletModifier = TankDefs.BulletType.Shotgun;
+				this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
+
+				this.modifierShots = 4;
+				this.maxBulletCount = 12;
+				this.reloadSpeed = 1.2f;        
+
+				break;
+
+			// Special Non-Bullet modifiers
+			case TankDefs.BulletType.Shield:
+
+				shielded = true;
+				if (ownShield == null)
+				{
+					ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
+				}
+				if (ownShield != null)
+					TurnOnShield();
+
+				this.bulletModifier = TankDefs.BulletType.Shield;
+				bulletPrefab = PickupManager.Instance.GetBulletPrefab(TankDefs.BulletType.Normal);
+
+				modifierShots = 0;
+				maxBulletCount = 4;
+				reloadSpeed = 1;
 
 				break;
 		}
@@ -244,6 +295,22 @@ public class MyTank : MonoBehaviour
 		reloadTimer = 0.0f;                                                         //Sets the reloadTimer to 0, so that we can't shoot straight away.
 		currentBulletCount += 3;
 		modifierShots -= 1;
+	}
+
+	public void TurnOnShield()
+	{
+		if (ownShield == null)
+			return;
+
+		ownShield.TurnOnShield();
+	}
+
+	public void TurnOffShield()
+	{
+		if (ownShield == null)
+			return;
+
+		ownShield.TurnOffShield();
 	}
 
 	#endregion
