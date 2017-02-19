@@ -45,6 +45,8 @@ public class Game : MonoBehaviour
 
 	void Start ()
 	{
+		InitializeTankColors();
+
 		//Load The Map
 		//mapToLoad = PlayerPrefs.GetString("MapToLoad");
 
@@ -56,13 +58,14 @@ public class Game : MonoBehaviour
 		//Tank Start Values
 		Player1Tank.InitializeaTank();
 		Player2Tank.InitializeaTank();
-        
-        // TODO:LATER - bool switch for HBs
-        //ui.SetupHealthBars();
 
-        //Tank Color
-        Player1Tank.GetComponent<SpriteRenderer>().color = player1Color;
-		Player2Tank.GetComponent<SpriteRenderer>().color = player2Color;
+		// TODO:LATER - bool switch for HBs
+		//ui.SetupHealthBars();
+
+		//Tank Color
+		InitializeTankColors();
+		//Player1Tank.GetComponent<SpriteRenderer>().color = player1Color;
+		//Player2Tank.GetComponent<SpriteRenderer>().color = player2Color;
 
 		//Set Tank Spawn Position
 		Player1Tank.transform.position = spawnPoints[0].transform.position;
@@ -79,6 +82,25 @@ public class Game : MonoBehaviour
 			WinGame(1);					//Player 2 wins the game.
 		}
 	}
+
+	public void InitializeTankColors()
+	{
+		if (TankChoosingMenu.Instance.allTankConfigurations != null && TankChoosingMenu.Instance.allTankConfigurations.Count >= 2)
+		{
+			TankConfiguration player1Config = TankChoosingMenu.Instance.allTankConfigurations[0];
+			player1Color = player1Config.TankColor;
+			Player1Tank.GetComponent<SpriteRenderer>().color = player1Color;
+
+			TankConfiguration player2Config = TankChoosingMenu.Instance.allTankConfigurations[1];
+			player2Color = player2Config.TankColor;
+			Player2Tank.GetComponent<SpriteRenderer>().color = player2Color;
+		} else
+		{
+			Player1Tank.GetComponent<SpriteRenderer>().color = player1Color;
+			Player2Tank.GetComponent<SpriteRenderer>().color = player2Color;
+		}
+	}
+
 
 	//Called when a player's score reaches the maxScore.
 	//The "playerId" value, is the id of the player that won the game.

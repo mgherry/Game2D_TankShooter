@@ -7,6 +7,7 @@ public class ShotgunPickup : IBulletPickup
 	public void Awake()
 	{
 		this.ownType = TankDefs.BulletType.Shotgun;
+		PickupManager.Instance.RegisterNewPickup(ownType, this);
 	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
@@ -20,4 +21,8 @@ public class ShotgunPickup : IBulletPickup
 		}
 	}
 
+	public void OnDestroy()
+	{
+		PickupManager.Instance.UnRegisterPickup(ownType, this);
+	}
 }

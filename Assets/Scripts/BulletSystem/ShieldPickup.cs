@@ -7,6 +7,7 @@ public class ShieldPickup : IBulletPickup
 	public void Awake()
 	{
 		this.ownType = TankDefs.BulletType.Shield;
+		PickupManager.Instance.RegisterNewPickup(ownType, this);
 	}
 
 	public void OnTriggerEnter2D(Collider2D collision)
@@ -20,4 +21,8 @@ public class ShieldPickup : IBulletPickup
 		}
 	}
 
+	public void OnDestroy()
+	{
+		PickupManager.Instance.UnRegisterPickup(ownType, this);
+	}
 }

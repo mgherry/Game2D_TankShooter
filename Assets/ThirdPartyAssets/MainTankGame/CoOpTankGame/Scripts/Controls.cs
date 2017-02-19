@@ -20,6 +20,31 @@ public class Controls : MonoBehaviour
 	[Header("Components")]
 	public Game game;
 
+	public void Awake()
+	{
+		InitializeTankControlls();
+	}
+
+	public void InitializeTankControlls()
+	{
+		if (TankChoosingMenu.Instance.allTankConfigurations != null && TankChoosingMenu.Instance.allTankConfigurations.Count >= 2)
+		{
+			TankConfiguration player1Config = TankChoosingMenu.Instance.allTankConfigurations[0];
+			p1MoveForward = player1Config.MoveForward;
+			p1MoveBackwards = player1Config.MoveBackwards;
+			p1TurnLeft = player1Config.TurnLeft;
+			p1TurnRight = player1Config.TurnRight;
+			p1Shoot = player1Config.Shoot;
+
+			TankConfiguration player2Config = TankChoosingMenu.Instance.allTankConfigurations[1];
+			p2MoveForward = player2Config.MoveForward;
+			p2MoveBackwards = player2Config.MoveBackwards;
+			p2TurnLeft = player2Config.TurnLeft;
+			p2TurnRight = player2Config.TurnRight;
+			p2Shoot = player2Config.Shoot;
+		}
+	}
+
 	void FixedUpdate ()
 	{
         //Time.deltaTime;

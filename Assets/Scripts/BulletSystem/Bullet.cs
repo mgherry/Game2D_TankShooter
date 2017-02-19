@@ -43,6 +43,9 @@ public class Bullet : MonoBehaviour
     {
         if (collision.collider.GetComponent<WallColliderSensor>() != null)
         {
+			if (this.leaveShieldTimer > 0)
+				this.leaveShieldTimer = 0;
+
             if (maxBounceCount <= currentBounceCount)
             {
                 shooterTank.DecreaseCurrentBulletCount();

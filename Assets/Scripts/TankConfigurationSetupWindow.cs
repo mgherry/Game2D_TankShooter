@@ -14,11 +14,13 @@ public class TankConfigurationSetupWindow : MonoBehaviour
     public Text ShootKey;
 
     public Image colorCircle;
-
+	public Image cancelCross;
     public InputField InputFieldReference;
 
     public string tankName = "PlayerTank";
-    
+
+	public bool cancelDisabled = false;
+
     public enum ButtonKeyName
     {
         NULL,
@@ -28,6 +30,17 @@ public class TankConfigurationSetupWindow : MonoBehaviour
         Left,
         Shoot,
     }
+
+	public void Awake()
+	{
+		if (cancelDisabled && cancelCross != null)
+		{
+			cancelCross.color = new Color(84f/256f, 84f/256f, 84f/256f, 1f); // Grey
+		} else if (cancelCross != null)
+		{
+			cancelCross.color = new Color(161f / 256f, 0f, 0f, 1f); // Dark Red
+		}
+	}
 
     public void Update()
     {
@@ -63,13 +76,11 @@ public class TankConfigurationSetupWindow : MonoBehaviour
     public void OnButtonClick()
     {
         EventSystem.current.SetSelectedGameObject(null);
-
     }
 
     public void OnDeletePressed()
     {
         EventSystem.current.SetSelectedGameObject(null);
-
     }
 
     public void OnNameChange()
@@ -98,6 +109,20 @@ public class TankConfigurationSetupWindow : MonoBehaviour
     {
         TankChoosingWindowManager.Instance.OnSetKeyRequest(this, ButtonKeyName.Left);
     }
+
+	public void OnShootClick()
+	{
+		TankChoosingWindowManager.Instance.OnSetKeyRequest(this, ButtonKeyName.Shoot);
+	}
+
+	public void OnCancelPlayerClick()
+	{
+		if (cancelDisabled)
+			return;
+
+		TankChoosingWindowManager.Instance.OnConfigRemoveClicked(this);
+		Destroy(gameObject);
+	}
 
     #endregion
 

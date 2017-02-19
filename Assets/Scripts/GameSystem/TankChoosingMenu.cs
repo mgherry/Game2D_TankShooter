@@ -33,7 +33,23 @@ public class TankChoosingMenu : IManagerBase<TankChoosingMenu> {
 
     public void OnReturnToMapMenu()
     {
-        allTankConfigurations = new List<TankConfiguration>();
+        //allTankConfigurations = new List<TankConfiguration>();
         MenuStateManager.Instance.ChangeScene(MenuStateManager.GameStage.MapChoosingMenu);
     }
+
+	public void RegisterTankConfig(TankConfiguration newConfig)
+	{
+		if (allTankConfigurations != null && !allTankConfigurations.Contains(newConfig))
+		{
+			allTankConfigurations.Add(newConfig);
+		}
+	}
+
+	public void UnregisterTankConfig(TankConfiguration newConfig)
+	{
+		if (allTankConfigurations != null && allTankConfigurations.Contains(newConfig))
+		{
+			allTankConfigurations.Remove(newConfig);
+		}
+	}
 }
