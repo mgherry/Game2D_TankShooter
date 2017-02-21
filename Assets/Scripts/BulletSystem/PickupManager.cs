@@ -10,8 +10,12 @@ public class PickupManager : IManagerBase<PickupManager>
     public GameObject normalBulletPrefab;
     public string normalBulletPrefabName = "TankBullet";
 
+    public GameObject longlivingBulletPrefab;
+    public string longlivingBulletPrefabName = "LonglivingBullet";
+
     public GameObject shotgunBulletPrefab;
     public string shotgunBulletPrefabName = "ShotgunBullet";
+
 
     public int maxPickupSpawns = 10;
     public float minPickupProbability = 2; // Muts be smaller than maxPickupSpawns
@@ -19,19 +23,25 @@ public class PickupManager : IManagerBase<PickupManager>
     public float pickupCheckTimer = 0f;
     public float pickupIntervals = 5f;
 
+    public List<LonglivingShotPickup> longlivingShotPickupsSpawned;
+    public float longlivingShotPickupTimer = 0f;
+
+    public List<MinigunPickup> minigunPickupsSpawned;
+    public float minigunPickupTimer = 0f;
+    
     public List<ShotgunPickup> shotgunPickupsSpawned;
     public float shotgunPickupTimer = 0f;
 
     public List<ShieldPickup> shieldPickupsSpawned;
     public float shieldPickupTimer = 0f;
 
-    public List<MinigunPickup> minigunPickupsSpawned;
-    public float minigunPickupTimer = 0f;
-
+  
     new public void Awake()
     {
         pickupCheckTimer = 0f;
 
+        longlivingShotPickupsSpawned = new List<LonglivingShotPickup>();
+        minigunPickupsSpawned = new List<MinigunPickup>();
         shotgunPickupsSpawned = new List<ShotgunPickup>();
         shieldPickupsSpawned = new List<ShieldPickup>();
     }
@@ -47,10 +57,18 @@ public class PickupManager : IManagerBase<PickupManager>
 		}*/
     }
 
-    public void RegisterNewPickup(TankDefs.BulletType bulletType, IBulletPickup pickupBehaviour)
+    public void RegisterNewPickup(TankDefs.BulletType bulletType, BaseBulletPickup pickupBehaviour)
     {
         switch (bulletType)
         {
+            case TankDefs.BulletType.LonglivingShot:
+
+                LonglivingShotPickup lsp = pickupBehaviour.GetComponent<LonglivingShotPickup>();
+                if (lsp != null && !longlivingShotPickupsSpawned.Contains(lsp))
+                    longlivingShotPickupsSpawned.Add(lsp);
+
+                break;
+
             case TankDefs.BulletType.Minigun:
 
                 MinigunPickup mp = pickupBehaviour.GetComponent<MinigunPickup>();
@@ -78,10 +96,18 @@ public class PickupManager : IManagerBase<PickupManager>
         }
     }
 
-    public void UnRegisterPickup(TankDefs.BulletType bulletType, IBulletPickup pickupBehaviour)
+    public void UnRegisterPickup(TankDefs.BulletType bulletType, BaseBulletPickup pickupBehaviour)
     {
         switch (bulletType)
         {
+            case TankDefs.BulletType.LonglivingShot:
+
+                LonglivingShotPickup lsp = pickupBehaviour.GetComponent<LonglivingShotPickup>();
+                if (lsp != null && longlivingShotPickupsSpawned.Contains(lsp))
+                    longlivingShotPickupsSpawned.Remove(lsp);
+
+                break;
+
             case TankDefs.BulletType.Minigun:
 
                 MinigunPickup mp = pickupBehaviour.GetComponent<MinigunPickup>();
@@ -116,14 +142,21 @@ public class PickupManager : IManagerBase<PickupManager>
         switch (bulletType)
         {
             case TankDefs.BulletType.Normal:
-                if (normalBulletPrefab != null)
+                if (normalBulletPrefab == null)
                     retBullet = Resources.Load(bulletPrefabsFolder + normalBulletPrefabName) as GameObject;
                 else
                     retBullet = Instantiate(normalBulletPrefab);
                 break;
 
+            case TankDefs.BulletType.LonglivingShot:
+                if (longlivingBulletPrefab == null)
+                    retBullet = Resources.Load(bulletPrefabsFolder + longlivingBulletPrefabName) as GameObject;
+                else
+                    retBullet = Instantiate(longlivingBulletPrefab);
+                break;
+
             case TankDefs.BulletType.Shotgun:
-                if (shotgunBulletPrefab != null)
+                if (shotgunBulletPrefab == null)
                     retBullet = Resources.Load(bulletPrefabsFolder + shotgunBulletPrefabName) as GameObject;
                 else
                     retBullet = Instantiate(shotgunBulletPrefab);

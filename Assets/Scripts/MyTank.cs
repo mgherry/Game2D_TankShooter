@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class MyTank : MonoBehaviour, IBulletHittable
 {
@@ -137,14 +138,21 @@ public class MyTank : MonoBehaviour, IBulletHittable
 				ShootNormal();
 				break;
 
-			case TankDefs.BulletType.Shotgun:
+            case TankDefs.BulletType.LonglivingShot:
+                ShootLonglivingShot();
+                break;
+
+            case TankDefs.BulletType.Shotgun:
 				ShootShotgun();
-				break;				
+				break;	
+                			
 		}
 
 		if (modifierShots <= 0 && bulletModifier != TankDefs.BulletType.Normal)
 			SetBulletType(TankDefs.BulletType.Normal);
     }
+
+    
 
     public void DecreaseCurrentBulletCount()
 	{
@@ -205,7 +213,7 @@ public class MyTank : MonoBehaviour, IBulletHittable
 					ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
 				}
 				if (ownShield != null)
-					TurnOnShield();
+					TurnOffShield();
 
 				this.bulletModifier = TankDefs.BulletType.Normal;
 				this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
@@ -216,6 +224,26 @@ public class MyTank : MonoBehaviour, IBulletHittable
 
 				break;
 
+
+            case TankDefs.BulletType.LonglivingShot:
+
+                shielded = false;
+                if (ownShield == null)
+                {
+                    ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
+                }
+                if (ownShield != null)
+                    TurnOffShield();
+
+                this.bulletModifier = TankDefs.BulletType.LonglivingShot;
+                this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
+
+                this.modifierShots = 4;
+                this.maxBulletCount = 4;
+                this.reloadSpeed = 1;
+
+                break;
+
             case TankDefs.BulletType.Minigun:
 
                 shielded = false;
@@ -224,14 +252,14 @@ public class MyTank : MonoBehaviour, IBulletHittable
                     ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
                 }
                 if (ownShield != null)
-                    TurnOnShield();
+                    TurnOffShield();
 
                 this.bulletModifier = TankDefs.BulletType.Normal;
                 this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
 
-                this.modifierShots = 0;
-                this.maxBulletCount = 8;
-                this.reloadSpeed = 0.75f;
+                this.modifierShots = 20;
+                this.maxBulletCount = 20;
+                this.reloadSpeed = 0.05f;
 
                 break;
 
@@ -243,7 +271,7 @@ public class MyTank : MonoBehaviour, IBulletHittable
 					ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
 				}
 				if (ownShield != null)
-					TurnOnShield();
+					TurnOffShield();
 
 				this.bulletModifier = TankDefs.BulletType.Shotgun;
 				this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
@@ -292,7 +320,23 @@ public class MyTank : MonoBehaviour, IBulletHittable
 		this.currentBulletCount++;
 	}
 
-	private void ShootShotgun()
+    private void ShootLonglivingShot()
+    {
+        GameObject bulletGameObject = Instantiate(bulletPrefab, muzzle.transform.position, Quaternion.identity) as GameObject;    //Spawns the projectile at the muzzle.
+        Bullet bullet = bulletGameObject.GetComponent<Bullet>();
+        bullet.transform.position = muzzle.position;
+        bullet.transform.rotation = transform.rotation;
+        bullet.direction = direction;
+        bullet.shooterTank = this;
+
+        if (this.shielded)
+            bullet.SetShieldTimer(0.01f);
+
+        this.reloadTimer = 0.0f;                                                         //Sets the reloadTimer to 0, so that we can't shoot straight away.
+        this.currentBulletCount++;
+    }
+
+    private void ShootShotgun()
 	{
 		GameObject bulletGameObject = Instantiate(bulletPrefab, muzzle.transform.position, Quaternion.identity) as GameObject;  
 		Bullet bullet1 = bulletGameObject.GetComponent<Bullet>();

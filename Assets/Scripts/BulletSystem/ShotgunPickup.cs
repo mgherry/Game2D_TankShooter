@@ -2,27 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShotgunPickup : IBulletPickup
+public class ShotgunPickup : BaseBulletPickup
 {
-	public void Awake()
+	new public void Awake()
 	{
 		this.ownType = TankDefs.BulletType.Shotgun;
-		PickupManager.Instance.RegisterNewPickup(ownType, this);
-	}
+        base.Awake();
+    }
 
-	public void OnTriggerEnter2D(Collider2D collision)
-	{
-		MyTank hitTank = collision.GetComponent<MyTank>();
-
-		if (hitTank != null)
-		{
-			hitTank.TriggerPickup(this.ownType);
-			Destroy(gameObject);
-		}
-	}
-
-	public void OnDestroy()
-	{
-		PickupManager.Instance.UnRegisterPickup(this.ownType, this);
-	}
 }

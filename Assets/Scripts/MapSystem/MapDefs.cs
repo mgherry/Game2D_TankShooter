@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapDefs {
-	
+public class MapDefs
+{
+
 	public class LabirinthMap
 	{
 		public int height = 10;
@@ -44,13 +45,39 @@ public class MapDefs {
 		}
 	}
 
+	public class AreaID
+	{
+		private static int nextID = 0;
+		public int GetID()
+		{
+			int id = nextID;
+			nextID++;
+			return id;
+		}
+	}
+
 	public class TreeMapNode
 	{
 		public TreeMapNode parent;
 		public List<TreeMapNode> children;
 
 		public bool wall = false;
+		public AreaID areaID;
+	}
+
+	public class TreeDataMap
+	{
+		public int height = 10;
+		public int width = 10;
+
+		public bool loaded = false;
+		public TreeMapNode[,] checkboard;
 
 	}
 
+	public class LabirinthEdge
+	{
+
+
+	}
 }

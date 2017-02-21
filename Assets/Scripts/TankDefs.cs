@@ -11,6 +11,7 @@ public class TankDefs {
 
 		Shield,
         Minigun,
+        LonglivingShot,
     }
 
 }
