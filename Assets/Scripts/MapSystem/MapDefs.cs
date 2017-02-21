@@ -10,7 +10,7 @@ public class MapDefs {
 		public int width = 10;
 
 		public bool loaded = false;
-		public bool[] checkboard;
+		public bool[,] checkboard;
 
 		public void ResetMap(int nHeight = int.MinValue, int nWidth = int.MinValue)
 		{
@@ -20,16 +20,28 @@ public class MapDefs {
 			if (nWidth != int.MinValue)
 				width = nWidth;
 
-			checkboard = new bool[height * width];
+			checkboard = new bool[height, width];
 
 			for (int h = 0; h < height; h++)
 				for (int w = 0; w < width; w++)
-					checkboard[h*w] = false;
+					checkboard[h, w] = false;
 
 			loaded = false;
 		}
 
-		//public void 
+		public void SetMap(bool[][] newMap)
+		{
+			if (newMap.Length != height * width)
+				return;
+
+			checkboard = new bool[height, width];
+
+			for (int h = 0; h < height; h++)
+				for (int w = 0; w < width; w++)
+					checkboard[h, w] = false;
+
+			loaded = false;
+		}
 	}
 
 	public class TreeMapNode

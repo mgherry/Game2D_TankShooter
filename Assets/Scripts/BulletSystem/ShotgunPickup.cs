@@ -23,6 +23,6 @@ public class ShotgunPickup : IBulletPickup
 
 	public void OnDestroy()
 	{
-		PickupManager.Instance.UnRegisterPickup(ownType, this);
+		PickupManager.Instance.UnRegisterPickup(this.ownType, this);
 	}
 }
