@@ -224,7 +224,7 @@ public class MyTank : MonoBehaviour, IBulletHittable
 					ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
 				}
 				if (ownShield != null)
-					TurnOnShield();
+					TurnOffShield();
 
 				this.bulletModifier = TankDefs.BulletType.Shotgun;
 				this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
