@@ -58,7 +58,7 @@ artifacts/
 *_p.c 
 *_i.h 
 *.ilk 
-*.meta 
+#*.meta  WARNING! Meta files needed by Unity!!!
 *.obj 
 *.pch 
 *.pdb 
