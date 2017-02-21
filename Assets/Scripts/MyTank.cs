@@ -216,7 +216,26 @@ public class MyTank : MonoBehaviour, IBulletHittable
 
 				break;
 
-			case TankDefs.BulletType.Shotgun:
+            case TankDefs.BulletType.Minigun:
+
+                shielded = false;
+                if (ownShield == null)
+                {
+                    ownShield = gameObject.GetComponentInChildren<ShieldBehaviour>();
+                }
+                if (ownShield != null)
+                    TurnOnShield();
+
+                this.bulletModifier = TankDefs.BulletType.Normal;
+                this.bulletPrefab = PickupManager.Instance.GetBulletPrefab(this.bulletModifier);
+
+                this.modifierShots = 0;
+                this.maxBulletCount = 8;
+                this.reloadSpeed = 0.75f;
+
+                break;
+
+            case TankDefs.BulletType.Shotgun:
 
 				shielded = false;
 				if (ownShield == null)

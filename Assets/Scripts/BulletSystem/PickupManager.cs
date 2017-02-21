@@ -2,121 +2,142 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickupManager : IManagerBase<PickupManager> {
+public class PickupManager : IManagerBase<PickupManager>
+{
 
-	private string bulletPrefabsFolder = "Prefabs/Bullets/";
+    private string bulletPrefabsFolder = "Prefabs/Bullets/";
 
-	public GameObject normalBulletPrefab;
-	public string normalBulletPrefabName = "TankBullet";  
-	
-	public GameObject shotgunBulletPrefab;
-	public string shotgunBulletPrefabName = "ShotgunBullet";
+    public GameObject normalBulletPrefab;
+    public string normalBulletPrefabName = "TankBullet";
 
-	public int maxPickupSpawns = 10;
-	public float minPickupProbability = 2; // Muts be smaller than maxPickupSpawns
+    public GameObject shotgunBulletPrefab;
+    public string shotgunBulletPrefabName = "ShotgunBullet";
 
-	public float pickupCheckTimer = 0f;
-	public float pickupIntervals = 5f;
+    public int maxPickupSpawns = 10;
+    public float minPickupProbability = 2; // Muts be smaller than maxPickupSpawns
 
-	public List<ShotgunPickup> shotgunPickupsSpawned;
-	public float shotgunPickupTimer = 0f;
+    public float pickupCheckTimer = 0f;
+    public float pickupIntervals = 5f;
 
-	public List<ShieldPickup> shieldPickupsSpawned;
-	public float shieldPickupTimer = 0f;
+    public List<ShotgunPickup> shotgunPickupsSpawned;
+    public float shotgunPickupTimer = 0f;
 
+    public List<ShieldPickup> shieldPickupsSpawned;
+    public float shieldPickupTimer = 0f;
 
-	new public void Awake()
-	{
-		pickupCheckTimer = 0f;
+    public List<MinigunPickup> minigunPickupsSpawned;
+    public float minigunPickupTimer = 0f;
 
-		shotgunPickupsSpawned = new List<ShotgunPickup>();
-		shieldPickupsSpawned = new List<ShieldPickup>();
-	}
+    new public void Awake()
+    {
+        pickupCheckTimer = 0f;
 
-	public void Update()
-	{
-		/*if (pickupCheckTimer <= 0)
+        shotgunPickupsSpawned = new List<ShotgunPickup>();
+        shieldPickupsSpawned = new List<ShieldPickup>();
+    }
+
+    public void Update()
+    {
+        /*if (pickupCheckTimer <= 0)
 		{
 			SetRandomSpawn();
 		} else
 		{
 			pickupCheckTimer -= Time.deltaTime;
 		}*/
-	}
+    }
 
-	public void RegisterNewPickup(TankDefs.BulletType bulletType, IBulletPickup pickupBehaviour)
-	{
-		switch (bulletType)
-		{
-			case TankDefs.BulletType.Shotgun:
+    public void RegisterNewPickup(TankDefs.BulletType bulletType, IBulletPickup pickupBehaviour)
+    {
+        switch (bulletType)
+        {
+            case TankDefs.BulletType.Minigun:
 
-				ShotgunPickup sp = pickupBehaviour.GetComponent<ShotgunPickup>();
-				if (sp != null && !shotgunPickupsSpawned.Contains(sp))
-					shotgunPickupsSpawned.Add(sp);
+                MinigunPickup mp = pickupBehaviour.GetComponent<MinigunPickup>();
+                if (mp != null && !minigunPickupsSpawned.Contains(mp))
+                    minigunPickupsSpawned.Add(mp);
 
-				break;
+                break;
 
-			case TankDefs.BulletType.Shield:
+            case TankDefs.BulletType.Shotgun:
 
-				ShieldPickup slp = pickupBehaviour.GetComponent<ShieldPickup>();
-				if (slp != null && !shieldPickupsSpawned.Contains(slp))
-					shieldPickupsSpawned.Add(slp);
+                ShotgunPickup sp = pickupBehaviour.GetComponent<ShotgunPickup>();
+                if (sp != null && !shotgunPickupsSpawned.Contains(sp))
+                    shotgunPickupsSpawned.Add(sp);
 
-				break;
-		}
-	}
+                break;
 
-	public void UnRegisterPickup(TankDefs.BulletType bulletType, IBulletPickup pickupBehaviour)
-	{
-		switch (bulletType)
-		{
-			case TankDefs.BulletType.Shotgun:
+            case TankDefs.BulletType.Shield:
 
-				ShotgunPickup sp = pickupBehaviour.GetComponent<ShotgunPickup>();
-				if (sp != null && shotgunPickupsSpawned.Contains(sp))
-					shotgunPickupsSpawned.Remove(sp);
+                ShieldPickup slp = pickupBehaviour.GetComponent<ShieldPickup>();
+                if (slp != null && !shieldPickupsSpawned.Contains(slp))
+                    shieldPickupsSpawned.Add(slp);
 
-				break;
+                break;
 
-			case TankDefs.BulletType.Shield:
+        }
+    }
 
-				ShieldPickup slp = pickupBehaviour.GetComponent<ShieldPickup>();
-				if (slp != null && shieldPickupsSpawned.Contains(slp))
-					shieldPickupsSpawned.Remove(slp);
+    public void UnRegisterPickup(TankDefs.BulletType bulletType, IBulletPickup pickupBehaviour)
+    {
+        switch (bulletType)
+        {
+            case TankDefs.BulletType.Minigun:
 
-				break;
-		}
-	}
+                MinigunPickup mp = pickupBehaviour.GetComponent<MinigunPickup>();
+                if (mp != null && minigunPickupsSpawned.Contains(mp))
+                    minigunPickupsSpawned.Remove(mp);
 
-	public GameObject GetBulletPrefab(TankDefs.BulletType bulletType)
-	{
-		GameObject retBullet = null;
+                break;
 
-		switch (bulletType)
-		{
-			case TankDefs.BulletType.Normal:
-				if (normalBulletPrefab != null)
-					retBullet = Resources.Load(bulletPrefabsFolder + normalBulletPrefabName) as GameObject;
-				else
-					retBullet = Instantiate(normalBulletPrefab);
-				break;
+            case TankDefs.BulletType.Shotgun:
 
-			case TankDefs.BulletType.Shotgun:
-				if (shotgunBulletPrefab != null)
-					retBullet = Resources.Load(bulletPrefabsFolder + shotgunBulletPrefabName) as GameObject;
-				else
-					retBullet = Instantiate(shotgunBulletPrefab);
-				break;
-		}
+                ShotgunPickup sp = pickupBehaviour.GetComponent<ShotgunPickup>();
+                if (sp != null && shotgunPickupsSpawned.Contains(sp))
+                    shotgunPickupsSpawned.Remove(sp);
 
-		return retBullet;
-	}
+                break;
 
-	public void	SetRandomSpawn()
-	{
-		Debug.LogError("TODO: Implement PickupManager.SetRandomSpawn() !!!");
 
-		/*
+            case TankDefs.BulletType.Shield:
+
+                ShieldPickup slp = pickupBehaviour.GetComponent<ShieldPickup>();
+                if (slp != null && shieldPickupsSpawned.Contains(slp))
+                    shieldPickupsSpawned.Remove(slp);
+
+                break;
+        }
+    }
+
+    public GameObject GetBulletPrefab(TankDefs.BulletType bulletType)
+    {
+        GameObject retBullet = null;
+
+        switch (bulletType)
+        {
+            case TankDefs.BulletType.Normal:
+                if (normalBulletPrefab != null)
+                    retBullet = Resources.Load(bulletPrefabsFolder + normalBulletPrefabName) as GameObject;
+                else
+                    retBullet = Instantiate(normalBulletPrefab);
+                break;
+
+            case TankDefs.BulletType.Shotgun:
+                if (shotgunBulletPrefab != null)
+                    retBullet = Resources.Load(bulletPrefabsFolder + shotgunBulletPrefabName) as GameObject;
+                else
+                    retBullet = Instantiate(shotgunBulletPrefab);
+                break;
+        }
+
+        return retBullet;
+    }
+
+    public void SetRandomSpawn()
+    {
+        Debug.LogError("TODO: Implement PickupManager.SetRandomSpawn() !!!");
+
+        /*
 		 * Fasssssssssssssáááááááááááááááááááááááááág
 		 * 
 		 * int allPickups = shotgunPickupsSpawned.Count + shieldPickupsSpawned.Count;
@@ -141,15 +162,15 @@ public class PickupManager : IManagerBase<PickupManager> {
 			SpawnShotgunPickup();
 			pickupCheckTimer = pickupIntervals;
 		}*/
-	}
+    }
 
-	public void SpawnShotgunPickup()
-	{
-		Debug.LogError("Spaned ShotgunPickup!");
-	}
+    public void SpawnShotgunPickup()
+    {
+        Debug.LogError("Spaned ShotgunPickup!");
+    }
 
-	public void SpawnShieldPickup()
-	{
-		Debug.LogError("Spaned ShieldnPickup!");
-	}
+    public void SpawnShieldPickup()
+    {
+        Debug.LogError("Spaned ShieldnPickup!");
+    }
 }
